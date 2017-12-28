@@ -17,14 +17,17 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh './scripts/test.sh'
+                sh 'npm test'
             }
         }
         stage('Deliver') {
             steps {
-                sh './scripts/deliver.sh'
+                sh 'npm run build'
+				sh 'npm start &'
+				sh 'sleep 1'
+				sh 'echo $! > .pidfile'
                 input message: 'Finished using the web site? (Click "Proceed" to continue)'
-                sh './scripts/kill.sh'
+                sh 'kill $(cat .pidfile)'
             }
         }
     }
